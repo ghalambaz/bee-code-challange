@@ -3,18 +3,13 @@
 
 namespace App\Tests\Controller\Api;
 
-use App\Entity\Artist;
 use App\Test\ApiTestCase;
 
 class RecordControllerTest extends ApiTestCase
 {
-    public function testRecordCreation()
+    public function testCreateRecord()
     {
-        $artist = new Artist();
-        $artist->setName('testName');
-        $this->entityManager->persist($artist);
-        $this->entityManager->flush();
-
+        $artist = $this->createArtist('test');
         $this->client->request(
             'POST',
             '/api/records',
@@ -30,7 +25,21 @@ class RecordControllerTest extends ApiTestCase
                 )
             )
         );
+
         $this->assertEquals(201, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function testDeleteRecord()
+    {
+        $record = $this->createRecord('record_title', 'record_desc', 10000);
+        $this->client->request(
+            'DELETE',
+            '/api/records/' . $record->getId(),
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+        );
+        $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
     }
 
 }
