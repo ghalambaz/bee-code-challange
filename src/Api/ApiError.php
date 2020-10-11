@@ -47,8 +47,8 @@ class ApiError
     public function __construct(
         int $statusCode,
         string $type = self::TYPE_UNKNOWN,
-        string $title = null,
-        array $content = []
+        array $content = [],
+        string $title = null
     ) {
         if (is_null($title)) {
             if (!empty($this->defaultTitles[$type])) {

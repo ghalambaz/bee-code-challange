@@ -54,6 +54,21 @@ class Record
     private $price;
 
     /**
+     * Record constructor.
+     * @param string $title
+     * @param string $description
+     * @param Artist $artist
+     * @param int $price
+     */
+    public function __construct(string $title, string $description, Artist $artist, int $price)
+    {
+        $this->title = $title;
+        $this->description = $description;
+        $this->artist = $artist;
+        $this->price = $price;
+    }
+
+    /**
      * @return int
      */
     public function getId(): int

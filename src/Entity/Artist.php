@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Repository\ArtistsRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -28,6 +30,18 @@ class Artist
      * @ORM\Column(name="name", type="string", length=100, nullable=false)
      */
     private $name;
+
+    /**
+     * @var Collection|Record[]
+     *
+     * @ORM\OneToMany(targetEntity="Record", mappedBy="artist")
+     */
+    private $records;
+
+    public function __construct()
+    {
+        $this->records = new ArrayCollection();
+    }
 
     /**
      * @return int
