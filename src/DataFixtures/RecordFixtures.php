@@ -11,8 +11,14 @@ use Faker\Generator;
 
 class RecordFixtures extends Fixture
 {
-    const ARTIST_COUNT = 30;
-    const RECORD_COUNT = 1000;
+    /**
+     * @var int
+     */
+    private $artistCount;
+    /**
+     * @var int
+     */
+    private $recordCount;
     /**
      * @var Generator
      */
@@ -21,6 +27,17 @@ class RecordFixtures extends Fixture
      * @var ObjectManager
      */
     protected $manager;
+
+    /**
+     * RecordFixtures constructor.
+     * @param int $artistCount
+     * @param int $recordCount
+     */
+    public function __construct(int $artistCount = 20, int $recordCount = 100)
+    {
+        $this->artistCount = $artistCount;
+        $this->recordCount = $recordCount;
+    }
 
     public function load(ObjectManager $manager)
     {
@@ -37,7 +54,7 @@ class RecordFixtures extends Fixture
     private function artistFixtures()
     {
         $artists = [];
-        for ($i = 1; $i <= self::ARTIST_COUNT; $i++) {
+        for ($i = 1; $i <= $this->artistCount; $i++) {
             $artist = new Artist();
             $artist->setName($this->faker->name);
             $this->manager->persist($artist);
@@ -48,7 +65,7 @@ class RecordFixtures extends Fixture
 
     private function recordFixtures($artists)
     {
-        for ($i = 1; $i <= self::RECORD_COUNT; $i++) {
+        for ($i = 1; $i <= $this->recordCount; $i++) {
             $record = new Record();
             $record->setTitle($this->faker->text(50));
             $record->setDescription($this->faker->realText());
