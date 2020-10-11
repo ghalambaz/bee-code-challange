@@ -3,8 +3,9 @@
 
 namespace App\Test;
 
-
 use App\DataFixtures\RecordFixtures;
+use App\Entity\Artist;
+use App\Entity\Record;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -52,6 +53,41 @@ class ApiTestCase extends WebTestCase
     {
         $purger = new ORMPurger($this->entityManager);
         $purger->purge();
+    }
+
+    /**
+     * @param $name
+     * @return Artist
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    protected function createArtist($name)
+    {
+        $artist = new Artist();
+        $artist->setName($name);
+        $this->entityManager->persist($artist);
+        $this->entityManager->flush();
+        return $artist;
+    }
+
+    /**
+     * @param $title
+     * @param $description
+     * @param $price
+     * @param null $artist
+     * @return Record
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    protected function createRecord($title, $description, $price, $artist = null)
+    {
+        if (is_null($artist)) {
+            $artist = $this->createArtist('test');
+        }
+        $record = new Record($title, $description, $artist, $price);
+        $this->entityManager->persist($record);
+        $this->entityManager->flush();
+        return $record;
     }
 
 }
