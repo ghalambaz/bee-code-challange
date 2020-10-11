@@ -39,7 +39,6 @@ class RecordController extends BaseApiController
         $this->getEntityManager()->persist($record);
         $this->getEntityManager()->flush();
 
-        //todo return record data + url for get + change message
         return $this->response($record, 201);
     }
 
@@ -55,5 +54,53 @@ class RecordController extends BaseApiController
         }
 
         return $this->response(null, 204);
+    }
+
+    /**
+     * @Route("/api/records/{id}", name="record_update" , methods={"PUT"})
+     */
+    public function record_update($id, Request $request)
+    {
+        /** @var Record $item */
+        $item = $this->getEntityManager()->getRepository(Record::class)->find($id);
+
+        if (!$item) {
+            $apiError = new ApiError(
+                404,
+                ApiError::TYPE_ITEM_NOT_FOUND,
+            );
+            $this->throwException($apiError);
+        }
+
+        $recordModel = new RecordModel();
+        $form = $this->createForm(RecordType::class, $recordModel);
+        $this->processForm($request, $form);
+
+        if (!$form->isValid()) {
+            $apiError = new ApiError(
+                400,
+                ApiError::TYPE_VALIDATION,
+                $this->getErrorsFromForm($form)
+            );
+            $this->throwException($apiError);
+        }
+
+        if (!empty($recordModel->getTitle())) {
+            $item->setTitle($recordModel->getTitle());
+        }
+        if (!empty($recordModel->getDescription())) {
+            $item->setDescription($recordModel->getDescription());
+        }
+        if (!empty($recordModel->getArtist())) {
+            $item->setArtist($recordModel->getArtist());
+        }
+        if (!empty($recordModel->getPrice())) {
+            $item->setPrice($recordModel->getPrice());
+        }
+
+        $this->getEntityManager()->persist($item);
+        $this->getEntityManager()->flush();
+
+        return $this->response($item, 200);
     }
 }

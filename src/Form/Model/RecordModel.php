@@ -9,89 +9,89 @@ use App\Entity\Artist;
 class RecordModel
 {
     /**
-     * @var string
+     * @var ?string
      */
     private $title;
     /**
-     * @var string
+     * @var ?string
      */
     private $description;
     /**
-     * @var int
+     * @var ?int
      */
     private $price;
     /**
-     * @var Artist
+     * @var ?Artist
      */
     private $artist;
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getTitle(): string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
     /**
-     * @param string $title
+     * @param string|null $title
      * @return RecordModel
      */
-    public function setTitle(string $title): RecordModel
+    public function setTitle(?string $title): RecordModel
     {
         $this->title = $title;
         return $this;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
     /**
-     * @param string $description
+     * @param string|null $description
      * @return RecordModel
      */
-    public function setDescription(string $description): RecordModel
+    public function setDescription(?string $description): RecordModel
     {
         $this->description = $description;
         return $this;
     }
 
     /**
-     * @return int
+     * @return int|null
      */
-    public function getPrice(): int
+    public function getPrice(): ?int
     {
         return $this->price;
     }
 
     /**
-     * @param int $price
+     * @param int|null $price
      * @return RecordModel
      */
-    public function setPrice(int $price): RecordModel
+    public function setPrice(?int $price): RecordModel
     {
         $this->price = $price;
         return $this;
     }
 
     /**
-     * @return Artist
+     * @return Artist|null
      */
-    public function getArtist()
+    public function getArtist(): ?Artist
     {
         return $this->artist;
     }
 
     /**
-     * @param Artist $artist
+     * @param Artist|null $artist
      * @return RecordModel
      */
-    public function setArtist(Artist $artist): RecordModel
+    public function setArtist(?Artist $artist): RecordModel
     {
         $this->artist = $artist;
         return $this;
