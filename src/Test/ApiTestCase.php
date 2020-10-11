@@ -25,7 +25,7 @@ class ApiTestCase extends WebTestCase
         $this->client = static::createClient();
         $this->entityManager = $this->getService('doctrine')
             ->getManager();
-        //$this->purgeDatabase();
+        $this->purgeDatabase();
     }
 
     /**
@@ -46,11 +46,6 @@ class ApiTestCase extends WebTestCase
     {
         $fixtures = new RecordFixtures($artists, $records);
         $fixtures->load($this->entityManager);
-    }
-
-    protected function getBaseUri(string $uri)
-    {
-        return $uri;
     }
 
     private function purgeDatabase()
