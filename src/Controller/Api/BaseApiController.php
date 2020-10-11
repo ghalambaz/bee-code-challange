@@ -86,5 +86,10 @@ class BaseApiController extends AbstractController
         return $errors;
     }
 
+    public function getEntityManager()
+    {
+        return $this->getDoctrine()->getManager();
+    }
+
 
 }
