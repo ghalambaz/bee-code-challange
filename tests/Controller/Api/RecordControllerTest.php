@@ -7,6 +7,18 @@ use App\Test\ApiTestCase;
 
 class RecordControllerTest extends ApiTestCase
 {
+    public function testNotFoundException()
+    {
+        $this->client->request(
+            'POST',
+            '/api/notfound',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json'],
+        );
+        $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
+    }
+
     public function testCreateRecord()
     {
         $artist = $this->createArtist('testArtist');
