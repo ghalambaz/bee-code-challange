@@ -52,7 +52,7 @@ class BaseApiController extends AbstractController
 
     public function response($content, $statusCode = 200)
     {
-        return (new ApiResponseFactory())->createJsonResponse($content, $statusCode);
+        return (new ApiResponseFactory($this->serializer))->createJsonResponse($content, $statusCode);
     }
 
     protected function processForm(Request $request, FormInterface $form)

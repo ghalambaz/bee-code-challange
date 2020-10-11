@@ -17,7 +17,7 @@ class Record
      * @var int
      *
      * @ORM\Id
-     * @ORM\Column(name="id", type="bigint", nullable=false, options={"unsigned"=true})
+     * @ORM\Column(name="id", type="integer", nullable=false, options={"unsigned"=true})
      * @ORM\GeneratedValue
      */
     private $id;

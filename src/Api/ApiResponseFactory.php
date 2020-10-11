@@ -3,31 +3,41 @@
 
 namespace App\Api;
 
-
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ApiResponseFactory
 {
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
+     * ApiResponseFactory constructor.
+     * @param SerializerInterface $serializer
+     */
+    public function __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
     public function createJsonExceptionResponse(ApiError $apiError)
     {
-        $response = new JsonResponse(
-            $apiError->getContent(),
-            $apiError->getStatusCode()
+        return new Response(
+            $this->serializer->serialize($apiError->getContent(), 'json'),
+            $apiError->getStatusCode(),
+            ['Content-Type', 'application/problem+json']
         );
-        $response->headers->set('Content-Type', 'application/problem+json');
-
-        return $response;
     }
 
     public function createJsonResponse($content, int $statusCode = 200)
     {
-        $response = new JsonResponse(
-            $content,
-            $statusCode
+        return new Response(
+            $this->serializer->serialize($content, 'json'),
+            $statusCode,
+            ['Content-Type', 'application/json']
         );
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
     }
 
 }
