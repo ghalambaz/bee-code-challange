@@ -10,12 +10,14 @@ class ApiError
     const TYPE_PARSE_REQUEST_CONTENT = 'invalid_body_content_error';
     const TYPE_INTERNAL = 'internal_error';
     const TYPE_UNKNOWN = 'unknown_error';
+    const TYPE_ITEM_NOT_FOUND = 'item_notfound_error';
 
     private $defaultTitles = [
         self::TYPE_VALIDATION => 'validation error',
         self::TYPE_PARSE_REQUEST_CONTENT => 'we have some issue in parsing your request content',
         self::TYPE_INTERNAL => 'internal server error',
         self::TYPE_UNKNOWN => 'unknown error',
+        self::TYPE_ITEM_NOT_FOUND => 'item not found!',
     ];
     /**
      * @var int

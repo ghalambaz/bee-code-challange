@@ -11,9 +11,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class ApiExceptionSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    public function __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
     public static function getSubscribedEvents()
     {
         return [
@@ -33,9 +44,6 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
 
         $statusCode = $e instanceof HttpExceptionInterface ? $e->getStatusCode() : 500;
 
-        if ($statusCode >= 500) {
-            return;
-        }
 
         if ($e instanceof ApiException) {
             $apiError = $e->getApiError();
@@ -49,7 +57,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             }
         }
 
-        $response = (new ApiResponseFactory())->createJsonExceptionResponse($apiError);
+        $response = (new ApiResponseFactory($this->serializer))->createJsonExceptionResponse($apiError);
 
         $event->setResponse($response);
     }
