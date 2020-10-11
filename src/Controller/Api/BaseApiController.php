@@ -86,6 +86,9 @@ class BaseApiController extends AbstractController
         return $errors;
     }
 
+    /**
+     * @return \Doctrine\Persistence\ObjectManager
+     */
     public function getEntityManager()
     {
         return $this->getDoctrine()->getManager();
