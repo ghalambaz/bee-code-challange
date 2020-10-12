@@ -40,9 +40,9 @@ class BaseApiController extends AbstractController
         return $this->serializer->deserialize($data, $classRef, 'json');
     }
 
-    public function serializer($object)
+    public function serializer($object, $context = null)
     {
-        return $this->serializer->serialize($object, 'json');
+        return $this->serializer->serialize($object, 'json', $context);
     }
 
     public function throwException(ApiError $apiError)
