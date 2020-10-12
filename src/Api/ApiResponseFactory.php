@@ -25,7 +25,7 @@ class ApiResponseFactory
     public function createJsonExceptionResponse(ApiError $apiError)
     {
         return new Response(
-            $this->serializer->serialize($apiError->getContent(), 'json'),
+            $this->serializer->serialize($apiError->getArray(), 'json'),
             $apiError->getStatusCode(),
             ['Content-Type', 'application/problem+json']
         );

@@ -11,6 +11,7 @@ class ApiError
     const TYPE_INTERNAL = 'internal_error';
     const TYPE_UNKNOWN = 'unknown_error';
     const TYPE_ITEM_NOT_FOUND = 'item_notfound_error';
+    const TYPE_BLANK = 'about:blank';
 
     private $defaultTitles = [
         self::TYPE_VALIDATION => 'validation error',
@@ -18,6 +19,7 @@ class ApiError
         self::TYPE_INTERNAL => 'internal server error',
         self::TYPE_UNKNOWN => 'unknown error',
         self::TYPE_ITEM_NOT_FOUND => 'item not found!',
+        self::TYPE_BLANK => 'Not Found'
     ];
     /**
      * @var int
@@ -48,13 +50,13 @@ class ApiError
      */
     public function __construct(
         int $statusCode,
-        string $type = self::TYPE_UNKNOWN,
+        string $type = self::TYPE_BLANK,
         array $content = [],
         string $title = null
     ) {
         if (is_null($title)) {
             if (!empty($this->defaultTitles[$type])) {
-                $this->title = $this->defaultTitles[$type];
+                $title = $this->defaultTitles[$type];
             }
         }
         $this->statusCode = $statusCode;
@@ -115,6 +117,18 @@ class ApiError
     {
         $this->content[$key] = $content;
         return $this;
+    }
+
+    public function getArray()
+    {
+        return array_merge(
+            $this->content,
+            [
+                'title' => $this->title,
+                'type' => $this->type,
+                'status' => $this->statusCode
+            ]
+        );
     }
 
 }

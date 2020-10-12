@@ -3,10 +3,9 @@
 
 namespace App\Controller\Api;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ApiController extends AbstractController
+class ApiController extends BaseApiController
 {
     /**
      * @Route("/api", name="api_index" , methods={"GET"})
