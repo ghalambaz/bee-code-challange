@@ -5,7 +5,10 @@ namespace App\Controller\Api;
 use App\Api\ApiError;
 use App\Entity\Record;
 use App\Form\Model\RecordModel;
+use App\Form\Model\RecordSearchModel;
+use App\Form\Type\RecordSearchType;
 use App\Form\Type\RecordType;
+use App\Repository\RecordsRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -57,7 +60,7 @@ class RecordController extends BaseApiController
     }
 
     /**
-     * @Route("/api/records/{id}", name="record_update" , methods={"PUT"})
+     * @Route("/api/records/{id}", name="record_update" , methods={"PUT","PATCH"})
      */
     public function record_update($id, Request $request)
     {
@@ -67,7 +70,7 @@ class RecordController extends BaseApiController
         if (!$item) {
             $apiError = new ApiError(
                 404,
-                ApiError::TYPE_ITEM_NOT_FOUND,
+                ApiError::TYPE_ITEM_NOT_FOUND
             );
             $this->throwException($apiError);
         }
@@ -102,5 +105,37 @@ class RecordController extends BaseApiController
         $this->getEntityManager()->flush();
 
         return $this->response($item, 200);
+    }
+
+    /**
+     * @Route("/api/records", name="record_list" , methods={"GET"})
+     */
+    public function record_list(Request $request)
+    {
+        $params = $request->query->all();
+        $searchFilter = new RecordSearchModel();
+        $form = $this->createForm(RecordSearchType::class, $searchFilter);
+        $form->submit($params);
+
+        if (!$form->isValid()) {
+            $apiError = new ApiError(
+                400,
+                ApiError::TYPE_VALIDATION,
+                $this->getErrorsFromForm($form)
+            );
+            $this->throwException($apiError);
+        }
+
+        $recordRepository = new RecordsRepository($this->getDoctrine());
+        $result = $recordRepository->searchByParamsOrderByArtist_Title($searchFilter);
+
+
+        return $this->response(
+            [
+                'records' => $result,
+                'count' => count($result)
+            ],
+            200
+        );
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Repository;
 
 use App\Entity\Record;
+use App\Form\Model\RecordSearchModel;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,6 +22,27 @@ class RecordsRepository extends ServiceEntityRepository
         parent::__construct($registry, Record::class);
     }
 
+    public function searchByParamsOrderByArtist_Title(RecordSearchModel $searchModel)
+    {
+        $query = $this->getEntityManager()->createQueryBuilder()
+            ->select('r', 'a')
+            ->from(Record::class, 'r')
+            ->leftJoin('r.artist', 'a');
+
+        if ($searchModel->getTitle()) {
+            $query->andWhere('r.title LIKE :title')->setParameter('title', '%' . $searchModel->getTitle() . '%');
+        }
+        if ($searchModel->getDescription()) {
+            $query->andWhere('r.description LIKE :description')->setParameter(
+                'description',
+                '%' . $searchModel->getDescription() . '%'
+            );
+        }
+        if ($searchModel->getArtist()) {
+            $query->andWhere('a.name LIKE :artist')->setParameter('artist', '%' . $searchModel->getArtist() . '%');
+        }
+        return $query->orderBy('a.name,r.title')->getQuery()->getResult();
+    }
     // /**
     //  * @return Record[] Returns an array of Record objects
     //  */
