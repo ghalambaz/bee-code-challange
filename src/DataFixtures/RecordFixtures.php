@@ -66,11 +66,12 @@ class RecordFixtures extends Fixture
     private function recordFixtures($artists)
     {
         for ($i = 1; $i <= $this->recordCount; $i++) {
-            $record = new Record();
-            $record->setTitle($this->faker->text(50));
-            $record->setDescription($this->faker->realText());
-            $record->setPrice($this->faker->numberBetween($min = 1000, $max = 9000));
-            $record->setArtist($this->faker->randomElement($artists));
+            $record = new Record(
+                $this->faker->text(50),
+                $this->faker->realText(),
+                $this->faker->randomElement($artists),
+                $this->faker->numberBetween($min = 1000, $max = 9000)
+            );
             $this->manager->persist($record);
         }
     }
