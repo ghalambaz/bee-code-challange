@@ -12,6 +12,7 @@ class ApiError
     const TYPE_UNKNOWN = 'unknown_error';
     const TYPE_ITEM_NOT_FOUND = 'item_notfound_error';
     const TYPE_BLANK = 'about:blank';
+    const TYPE_BAD_CREDENTIAL = 'bad_credential_error';
 
     private $defaultTitles = [
         self::TYPE_VALIDATION => 'validation error',
@@ -19,7 +20,8 @@ class ApiError
         self::TYPE_INTERNAL => 'internal server error',
         self::TYPE_UNKNOWN => 'unknown error',
         self::TYPE_ITEM_NOT_FOUND => 'item not found!',
-        self::TYPE_BLANK => 'Not Found'
+        self::TYPE_BLANK => 'Not Found',
+        self::TYPE_BAD_CREDENTIAL => 'user or password is wrong'
     ];
     /**
      * @var int
@@ -129,6 +131,19 @@ class ApiError
                 'status' => $this->statusCode
             ]
         );
+    }
+
+    /**
+     * @param string $type
+     * @return ApiError
+     */
+    public function setType(string $type, bool $autoTitle = true): ApiError
+    {
+        $this->type = $type;
+        if (isset($this->defaultTitles[$type])) {
+            $this->title = $this->defaultTitles[$type];
+        }
+        return $this;
     }
 
 }

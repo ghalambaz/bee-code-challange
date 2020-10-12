@@ -9,6 +9,7 @@ use App\Api\ApiException;
 use App\Api\ApiResponseFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Serializer\SerializerInterface;
@@ -51,9 +52,11 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             $apiError = new ApiError(
                 $statusCode
             );
+            $apiError->setType(ApiError::TYPE_INTERNAL);
+            $apiError->setContent('detail', $e->getMessage());
 
-            if ($e instanceof HttpExceptionInterface) {
-                $apiError->setContent('detail', $e->getMessage());
+            if ($e instanceof HttpException && $e->getStatusCode() == 401) {
+                $apiError->setType($apiError::TYPE_BAD_CREDENTIAL);
             }
         }
 
