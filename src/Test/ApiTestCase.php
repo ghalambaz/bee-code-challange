@@ -6,6 +6,7 @@ namespace App\Test;
 use App\DataFixtures\RecordFixtures;
 use App\Entity\Artist;
 use App\Entity\Record;
+use App\Entity\User;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
@@ -88,6 +89,24 @@ class ApiTestCase extends WebTestCase
         $this->entityManager->persist($record);
         $this->entityManager->flush();
         return $record;
+    }
+
+    /**
+     * @param string $username
+     * @param string $password
+     * @return User
+     * @throws \Doctrine\ORM\ORMException
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function createUser($username = 'ali', $password = 'password')
+    {
+        $user = new User();
+        $user->setPassword($password);
+        $user->setUsername($username);
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        return $user;
     }
 
 }
