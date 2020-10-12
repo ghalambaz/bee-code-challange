@@ -22,12 +22,18 @@ class ApiTestCase extends WebTestCase
      */
     protected $entityManager;
 
+    /**
+     * @var array
+     */
+    protected $tokenHeader;
+
     protected function setUp()
     {
         $this->client = static::createClient();
         $this->entityManager = $this->getService('doctrine')
             ->getManager();
         $this->purgeDatabase();
+        $this->fillTestData();
     }
 
     /**
@@ -48,6 +54,41 @@ class ApiTestCase extends WebTestCase
     {
         $fixtures = new RecordFixtures($artists, $records);
         $fixtures->load($this->entityManager);
+    }
+
+    protected function fillTestData()
+    {
+        $artists = [];
+        $names = ['aaa', 'bbb', 'ccc', 'ddd', 'eee'];
+        for ($i = 0; $i < count($names); $i++) {
+            $artist = new Artist();
+            $artist->setName($names[$i]);
+            $this->entityManager->persist($artist);
+            $artists[] = $artist;
+        }
+
+        $record = new Record('A', 'F', $artists[0], 1000);
+        $this->entityManager->persist($record);
+        $record = new Record('A', 'G', $artists[0], 1000);
+        $this->entityManager->persist($record);
+        $record = new Record('B', 'H', $artists[1], 2000);
+        $this->entityManager->persist($record);
+        $record = new Record('B', 'I', $artists[1], 2000);
+        $this->entityManager->persist($record);
+        $record = new Record('C', 'J', $artists[2], 3000);
+        $this->entityManager->persist($record);
+        $record = new Record('C', 'K', $artists[2], 3000);
+        $this->entityManager->persist($record);
+        $record = new Record('D', 'L', $artists[3], 4000);
+        $this->entityManager->persist($record);
+        $record = new Record('D', 'M', $artists[3], 4000);
+        $this->entityManager->persist($record);
+        $record = new Record('E', 'N', $artists[4], 5000);
+        $this->entityManager->persist($record);
+        $record = new Record('E', 'O', $artists[4], 5000);
+        $this->entityManager->persist($record);
+
+        $this->entityManager->flush();
     }
 
     private function purgeDatabase()
@@ -107,6 +148,34 @@ class ApiTestCase extends WebTestCase
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    public function getToken(User $user)
+    {
+        return $this->getService('lexik_jwt_authentication.encoder')
+            ->encode(['username' => $user->getUsername()]);
+    }
+
+    private function getNewToken()
+    {
+        $user = $this->createUser('ali' . rand(0, 10000), 'password' . rand(0, 10000));
+        return $this->getService('lexik_jwt_authentication.encoder')
+            ->encode(['username' => $user->getUsername()]);
+    }
+
+    public function getTokenHeader(?User $user = null)
+    {
+        if (!is_null($this->tokenHeader)) {
+            return $this->tokenHeader;
+        }
+        if (is_null($user)) {
+            $user = $this->createUser();
+        }
+        $this->tokenHeader = [
+            'HTTP_AUTHORIZATION' => 'Bearer ' . $this->getToken($user),
+            'CONTENT_TYPE' => 'application/json',
+        ];
+        return $this->tokenHeader;
     }
 
 }

@@ -14,7 +14,7 @@ class RecordControllerTest extends ApiTestCase
             '/api/notfound',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            $this->getTokenHeader()
         );
         $this->assertEquals(404, $this->client->getResponse()->getStatusCode());
     }
@@ -27,7 +27,7 @@ class RecordControllerTest extends ApiTestCase
             '/api/records',
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            $this->getTokenHeader(),
             json_encode(
                 array(
                     'title' => 'test Title',
@@ -49,11 +49,10 @@ class RecordControllerTest extends ApiTestCase
             '/api/records/' . $record->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            $this->getTokenHeader()
         );
         $this->assertEquals(204, $this->client->getResponse()->getStatusCode());
     }
-
 
     /**
      * @dataProvider updateDataProvider
@@ -69,7 +68,7 @@ class RecordControllerTest extends ApiTestCase
             '/api/records/' . $record->getId(),
             [],
             [],
-            ['CONTENT_TYPE' => 'application/json'],
+            $this->getTokenHeader(),
             json_encode(
                 array(
                     'title' => $title,
@@ -107,5 +106,50 @@ class RecordControllerTest extends ApiTestCase
             [null, null, null],
         ];
     }
+
+    /**
+     * @dataProvider searchData
+     */
+    public function testSearchRecord($query, $results)
+    {
+        $this->client->request(
+            'GET',
+            '/api/records?' . $query,
+            [],
+            []
+        );
+
+        $arrayData = json_decode($this->client->getResponse()->getContent(), true);
+        $this->assertArrayHasKey('records', $arrayData);
+        $this->assertArrayHasKey('count', $arrayData);
+        $this->assertEquals(count($arrayData['records']), $arrayData['count']);
+        $this->assertEquals(count($arrayData['records']), $results);
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+    }
+
+    public function searchData()
+    {
+        return [
+            ['', 10],
+            ['artist=aaa', 2],
+            ['artist=aaa&title=A', 2],
+            ['artist=aaa&title=A&description=F', 1],
+            ['artist=Q', 0]
+        ];
+    }
+
+
+    public function testAuthenticationRequired()
+    {
+        $this->client->request(
+            'POST',
+            '/api/records',
+            [],
+            [],
+            ['CONTENT_TYPE' => 'application/json']
+        );
+        $this->assertEquals(401, $this->client->getResponse()->getStatusCode());
+    }
+
 
 }
