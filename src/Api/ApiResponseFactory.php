@@ -27,7 +27,8 @@ class ApiResponseFactory
         return new Response(
             $this->serializer->serialize($apiError->getArray(), 'json'),
             $apiError->getStatusCode(),
-            ['Content-Type' => 'application/problem+json']
+            //['Content-Type' => 'application/problem+json']
+            ['Content-Type' => 'application/json']
         );
     }
 

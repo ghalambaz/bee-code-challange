@@ -47,13 +47,13 @@ class ApiError
      * ApiError constructor.
      * @param int $statusCode
      * @param string $type
+     * @param $detail
      * @param string|null $title
-     * @param array $content
      */
     public function __construct(
         int $statusCode,
         string $type = self::TYPE_BLANK,
-        array $content = [],
+        $detail = '',
         string $title = null
     ) {
         if (is_null($title)) {
@@ -64,7 +64,7 @@ class ApiError
         $this->statusCode = $statusCode;
         $this->type = $type;
         $this->title = $title;
-        $this->content = $content;
+        $this->content['detail'] = $detail;
     }
 
 

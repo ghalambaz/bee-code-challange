@@ -53,6 +53,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
                 $statusCode
             );
             $apiError->setType(ApiError::TYPE_INTERNAL);
+            //just in debug mode
             $apiError->setContent('detail', $e->getMessage());
 
             if ($e instanceof HttpException && $e->getStatusCode() == 401) {
