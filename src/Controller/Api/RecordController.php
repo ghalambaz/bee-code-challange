@@ -9,13 +9,47 @@ use App\Form\Model\RecordSearchModel;
 use App\Form\Type\RecordSearchType;
 use App\Form\Type\RecordType;
 use App\Repository\RecordsRepository;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
 
 class RecordController extends BaseApiController
 {
     /**
      * @Route("/api/records", name="record_creation" , methods={"POST"})
+     * @OA\Tag(name="Store")
+     * @Security(name="Bearer")
+     * @OA\RequestBody(
+     *     request="Record",
+     *     description="Record Data with Artist ID",
+     *     required=true,
+     *     @OA\JsonContent(
+     *              @OA\Property(property="title", type="string",example="Smelly Cat"),
+     *              @OA\Property(property="description", type="string",example="Smelly Cat 2020 from friends"),
+     *              @OA\Property(property="artist", type="integer",example="123",description="id of artist"),
+     *              @OA\Property(property="price", type="integer",example="1099",description="1099 is equal to 10.99euro"),
+     *     )
+     * )
+     * @OA\Response(
+     *     response=201,
+     *     description="Returns the records of store",
+     *     @OA\JsonContent(
+     *              @OA\Property(ref=@Model(type=Record::class)),
+     *     )
+     * )
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation Error",
+     *     @OA\JsonContent(ref="#/components/schemas/ApiError")
+     * )
+     * @OA\Response(
+     *     response="401",
+     *     description="Credential Error",
+     *     @OA\JsonContent(ref="#/components/schemas/JwtError")
+     * )
      */
     public function record_creation(Request $request)
     {
@@ -47,6 +81,17 @@ class RecordController extends BaseApiController
 
     /**
      * @Route("/api/records/{id}", name="record_deletion" , methods={"DELETE"})
+     * @OA\Tag(name="Store")
+     * @Security(name="Bearer")
+     * @OA\Response(
+     *     response=204,
+     *     description="always return success!",
+     * )
+     * @OA\Response(
+     *     response="401",
+     *     description="Credential Error",
+     *     @OA\JsonContent(ref="#/components/schemas/JwtError")
+     * )
      */
     public function record_deletion($id)
     {
@@ -61,6 +106,26 @@ class RecordController extends BaseApiController
 
     /**
      * @Route("/api/records/{id}", name="record_update" , methods={"PUT","PATCH"})
+     * @OA\Tag(name="Store")
+     * @Security(name="Bearer")
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the records of store",
+     *     @OA\JsonContent(
+     *              @OA\Property(property="records",ref=@Model(type=Record::class)),
+     *              @OA\Property(property="count", type="integer"),
+     *     )
+     * ),
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation Error",
+     *     @OA\JsonContent(ref="#/components/schemas/ApiError")
+     * ),
+     * @OA\Response(
+     *     response="401",
+     *     description="Credential Error",
+     *     @OA\JsonContent(ref="#/components/schemas/JwtError")
+     * )
      */
     public function record_update($id, Request $request)
     {
@@ -109,6 +174,42 @@ class RecordController extends BaseApiController
 
     /**
      * @Route("/api/records", name="record_list" , methods={"GET"})
+     * @OA\Tag(name="Store")
+     *
+     * @OA\Parameter(
+     *      name="artist",
+     *      in="query",
+     *      description="search for name of artists",
+     *      example="Joye",
+     *      @OA\Schema(type="string")
+     * )
+     * @OA\Parameter(
+     *      name="title",
+     *      in="query",
+     *      description="search in titles of records",
+     *      example="Days of our lives",
+     *      @OA\Schema(type="string")
+     *)
+     * @OA\Parameter(
+     *      name="description",
+     *      in="query",
+     *      description="search in decsriptions of records",
+     *      example="Friends",
+     *      @OA\Schema(type="string")
+     *)
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the records of store",
+     *     @OA\JsonContent(
+     *              @OA\Property(property="records",ref=@Model(type=Record::class)),
+     *              @OA\Property(property="count", type="integer" , example="1"),
+     *     )
+     * )
+     * @OA\Response(
+     *     response="400",
+     *     description="Validation Error",
+     *     @OA\JsonContent(ref="#/components/schemas/ApiError")
+     * )
      */
     public function record_list(Request $request)
     {

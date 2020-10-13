@@ -6,6 +6,7 @@ namespace App\Entity;
 
 use App\Repository\RecordsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="record", indexes={@ORM\Index(name="idx_artist", columns={"artist_id"})})
@@ -26,6 +27,9 @@ class Record
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=100, nullable=false)
+     *
+     * @Assert\Type("string")
+     * @Assert\Length(min="1", max="100")
      */
     private $title;
 
@@ -33,6 +37,9 @@ class Record
      * @var string
      *
      * @ORM\Column(type="string")
+     *
+     * @Assert\Type("string")
+     * @Assert\Length(min="1", max="65000")
      */
     private $description;
 
@@ -50,6 +57,9 @@ class Record
      * @var int
      *
      * @ORM\Column(name="price", type="integer", nullable=false)
+     *
+     * @Assert\Type("integer")
+     * @Assert\PositiveOrZero()
      */
     private $price;
 
